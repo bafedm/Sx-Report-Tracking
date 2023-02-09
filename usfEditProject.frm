@@ -1,26 +1,27 @@
 VERSION 5.00
 Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} usfEditProject 
-   Caption         =   "Edit Project"
+   Caption         =   "Edit or Add Project"
    ClientHeight    =   2520
    ClientLeft      =   120
    ClientTop       =   465
    ClientWidth     =   7080
    OleObjectBlob   =   "usfEditProject.frx":0000
    ShowModal       =   0   'False
-   StartUpPosition =   1  'CenterOwner
+   StartUpPosition =   3  'Windows Default
 End
 Attribute VB_Name = "usfEditProject"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
+
 Option Explicit
 
 '@Description("Generates list of project numbers with project names from the active week report table")
 Public Sub RefreshProjectList(tblCurrentWeek As ListObject, Optional preserveSelection As String = "")
 
 'Generic Variables
-    Dim i As Interior, j As Integer, k As Integer
+    Dim i As Integer, j As Integer, k As Integer
 
 'Use ArrayList array type to store concated project details.  ArrayList has sort function.
     Dim projectList     As Object:  Set projectList = CreateObject("System.Collections.ArrayList")
@@ -43,7 +44,7 @@ End Sub
 Private Sub cmbAddProject_Click()
 
 'Generic Variables
-    Dim i As Interior, j As Integer, k As Integer
+    Dim i As Integer, j As Integer, k As Integer
 
     Dim wb                      As Workbook:    Set wb = ThisWorkbook
     Dim wsProjectData           As Worksheet:   Set wsProjectData = wb.Worksheets("project list")
@@ -135,7 +136,7 @@ End Sub
 Private Sub cmbProjects_Change()
 
 'Generic Variables
-    Dim i As Interior, j As Integer, k As Integer
+    Dim i As Integer, j As Integer, k As Integer
     
     Dim wb                      As Workbook:    Set wb = ThisWorkbook
     Dim wsProjectData           As Worksheet:   Set wsProjectData = wb.Worksheets("project list")
@@ -198,7 +199,7 @@ End Sub
 Private Sub cmbUpdateProject_Click()
 
 'Generic Variables
-    Dim i As Interior, j As Integer, k As Integer
+    Dim i As Integer, j As Integer, k As Integer
 
     Dim wb                      As Workbook:    Set wb = ThisWorkbook
     Dim wsProjectData           As Worksheet:   Set wsProjectData = wb.Worksheets("project list")
@@ -271,7 +272,7 @@ End Sub
 Private Function ValidateAddProjectNumber(jobNumber As String) As Boolean
 
 'Generic Variables
-    Dim i As Interior, j As Integer, k As Integer
+    Dim i As Integer, j As Integer, k As Integer
 
     Dim wb                      As Workbook:    Set wb = ThisWorkbook
     Dim wsProjectData           As Worksheet:   Set wsProjectData = wb.Worksheets("project list")
@@ -282,6 +283,14 @@ Private Function ValidateAddProjectNumber(jobNumber As String) As Boolean
     Dim tblActiveWeek           As ListObject:  Set tblActiveWeek = Main.GetWeeklyTableListObjectFromWorksheet(wsActiveSheet)
     
     Dim errorMessage            As String
+    
+'Check if on weekly report worksheet.  If not display error and close form.
+    If tblActiveWeek Is Nothing Then
+        MsgBox "Unable to load projects list.  Return to Weekly Report page and click edit/add project button to try again.", vbOKOnly + vbInformation
+        usfEditProject.Hide
+        ValidateAddProjectNumber = True
+        Exit Function
+    End If
 
 'each of the following blocks scans the tables for the job number.  If found it adds its details to the error message
     With tblImportedProjectList.DataBodyRange

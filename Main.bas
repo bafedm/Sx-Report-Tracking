@@ -2,8 +2,16 @@ Attribute VB_Name = "Main"
 Option Explicit
 
 Sub Button3_Click()
+    Dim formControl As Control
+        For Each formControl In usfEditProject.Controls
+            If TypeName(formControl) = "Textbox" Then
+                formControl.Value = ""
+            End If
+        Next formControl
+        
     usfEditProject.Show
     Main
+    
 End Sub
 
 '@Folder("VBAProject")
@@ -30,7 +38,7 @@ Private Sub Main()
     Dim tblManualJobList        As ListObject:              Set tblManualJobList = wsProjectData.ListObjects("tbl_userDefinedProjectList")
     Dim tblProjectStartDates    As ListObject:              Set tblProjectStartDates = wsProjectData.ListObjects("tbl_startDates")
 
-'Dictionary to hold weekly tables.
+'Dictionary to hold weekly tables. (Not currently needed)
     'Key:   Worksheet name in format of YYWeekXX
     'Value: weekly table data as List Object
     
@@ -53,9 +61,9 @@ Private Sub Main()
         DebugOut "Project Start Dates Row Count", tblProjectStartDates.Range.Rows.Count
         DebugOut "Active Week Table Name", TypeName(tblActiveWeek)
 
-        For i = 0 To dictWeeklyData.Count - 1
-            DebugOut dictWeeklyData.Keys()(i) & ": " & dictWeeklyData.Items()(i).Range.Rows.Count, "", ""
-        Next i
+'        For i = 0 To dictWeeklyData.Count - 1
+'            DebugOut dictWeeklyData.Keys()(i) & ": " & dictWeeklyData.Items()(i).Range.Rows.Count, "", ""
+'        Next i
         
     End If
 End Sub
